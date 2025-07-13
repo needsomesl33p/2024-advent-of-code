@@ -19,8 +19,21 @@ function isSafe(level: string[]) {
         if (!(isIncreased && isCorrectDiffer)) {
             return false;
         }
-    };
+    }
     return true;
+}
+
+function isProblemDampenerOK(level: string[]) {
+    for (let idx = 0; idx < level.length; idx++) {
+        const reducedLevel: string[] = [...level];
+        reducedLevel.splice(idx, 1);
+        !isIncreasing(Number(reducedLevel[0]), Number(reducedLevel[1])) ? reducedLevel.reverse() : "";
+        if (isSafe(reducedLevel)) {
+            return true;
+        }
+    }
+    return false;
+
 }
 
 async function main() {
@@ -30,11 +43,14 @@ async function main() {
 
     reports.forEach((report: string) => {
         const level: string[] = report.split(" ");
-        if (!isIncreasing(Number(level[0]), Number(level[1]))) {
-            level.reverse();
-        };
-        safeLevelNumber = isSafe(level) ? safeLevelNumber + 1 : safeLevelNumber;
+        const secondLevel: string[] = [...level];
+        !isIncreasing(Number(level[0]), Number(level[1])) ? level.reverse() : "";
 
+        if (isSafe(level)) {
+            safeLevelNumber += 1;
+        } else {
+            safeLevelNumber = isProblemDampenerOK(secondLevel) ? safeLevelNumber + 1 : safeLevelNumber;
+        }
     });
 
     console.log(safeLevelNumber);
