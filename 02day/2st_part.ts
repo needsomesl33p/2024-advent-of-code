@@ -4,15 +4,15 @@ async function readInput(fileName: string): Promise<string> {
     return await fs.readFile(fileName, "utf8");
 }
 
-function isIncreasing(first: number, second: number) {
+function isIncreasing(first: number, second: number): boolean {
     return first < second;
 }
 
-function isCorrectDiffering(first: number, second: number) {
+function isCorrectDiffering(first: number, second: number): boolean {
     return first + 4 > second;
 }
 
-function isSafe(level: string[]) {
+function isSafe(level: string[]): boolean {
     for (let idx = 0; idx < level.length - 1; idx++) {
         const isIncreased: boolean = isIncreasing(Number(level[idx]), Number(level[idx + 1]));
         const isCorrectDiffer: boolean = isCorrectDiffering(Number(level[idx]), Number(level[idx + 1]));
@@ -23,7 +23,7 @@ function isSafe(level: string[]) {
     return true;
 }
 
-function isProblemDampenerOK(level: string[]) {
+function isProblemDampenerOK(level: string[]): boolean {
     for (let idx = 0; idx < level.length; idx++) {
         const reducedLevel: string[] = [...level];
         reducedLevel.splice(idx, 1);
