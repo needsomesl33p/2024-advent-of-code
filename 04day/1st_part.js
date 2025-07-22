@@ -54,6 +54,7 @@ function reverseWords(str) {
     return reversedWords.join("").trim();
 }
 function evalString(section) {
+    console.log(section, section == MAGICWORD || reverseWords(section) == MAGICWORD ? 1 : 0);
     return section == MAGICWORD || reverseWords(section) == MAGICWORD ? 1 : 0;
 }
 function horizontalSearch(row, position) {
@@ -61,6 +62,7 @@ function horizontalSearch(row, position) {
         return 0;
     }
     var section = row.substring(position, position + MAGICWORD.length);
+    console.log("horizontal", section);
     return evalString(section);
 }
 function verticalSearch(rowNumber, position, input) {
@@ -68,6 +70,7 @@ function verticalSearch(rowNumber, position, input) {
         return 0;
     }
     var section = getVerticalString(rowNumber, position, input);
+    console.log("vertical", section);
     return evalString(section);
 }
 function getVerticalString(rowNumber, position, input) {
@@ -80,10 +83,12 @@ function getVerticalString(rowNumber, position, input) {
 function CrossSearch(rowNumber, position, input) {
     var horizontalStopPoint = position > input[rowNumber].length - MAGICWORD.length;
     var verticalStopPoint = input.length - MAGICWORD.length < rowNumber;
+    console.log(position, rowNumber, horizontalStopPoint, verticalStopPoint);
     if (horizontalStopPoint || verticalStopPoint) {
         return 0;
     }
     var section = getCrossString(rowNumber, position, input);
+    console.log("diag", section);
     return evalString(section);
 }
 function getCrossString(rowNumber, position, input) {
@@ -106,7 +111,7 @@ function mirrorMatrix(rows) {
 }
 function main() {
     return __awaiter(this, void 0, void 0, function () {
-        var result, inputs, rows, rowNumber, _i, rows_2, row, position, mirroredMatrix, _a, mirroredMatrix_1, row, position;
+        var result, inputs, rows, rowNumber, _i, rows_2, row, position, subResult1, subResult2, subResult3, mirroredMatrix, _a, mirroredMatrix_1, row, position;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
@@ -119,6 +124,9 @@ function main() {
                     for (_i = 0, rows_2 = rows; _i < rows_2.length; _i++) {
                         row = rows_2[_i];
                         for (position = 0; position < row.length; position++) {
+                            subResult1 = horizontalSearch(row, position);
+                            subResult2 = verticalSearch(rowNumber, position, rows);
+                            subResult3 = CrossSearch(rowNumber, position, rows);
                             result += horizontalSearch(row, position);
                             result += verticalSearch(rowNumber, position, rows);
                             result += CrossSearch(rowNumber, position, rows);
@@ -130,7 +138,7 @@ function main() {
                     for (_a = 0, mirroredMatrix_1 = mirroredMatrix; _a < mirroredMatrix_1.length; _a++) {
                         row = mirroredMatrix_1[_a];
                         for (position = 0; position < row.length; position++) {
-                            result += CrossSearch(rowNumber, position, rows);
+                            result += CrossSearch(rowNumber, position, mirroredMatrix);
                         }
                         rowNumber++;
                     }

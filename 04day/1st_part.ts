@@ -41,7 +41,7 @@ function getVerticalString(rowNumber: number, position: number, input: string[])
     return letters.join("");
 }
 
-function CrossSearch(rowNumber: number, position: number, input: string[]): number {
+function crossSearch(rowNumber: number, position: number, input: string[]): number {
     const horizontalStopPoint = position > input[rowNumber].length - MAGICWORD.length
     const verticalStopPoint = input.length - MAGICWORD.length < rowNumber
     if (horizontalStopPoint || verticalStopPoint) {
@@ -74,20 +74,20 @@ async function main() {
     let result: number = 0;
     const inputs: string = await readInput("input.txt");
     const rows: string[] = inputs.split("\n");
-    let rowNumber = 0;
+    let rowNumber: number = 0;
     for (let row of rows) {
         for (let position = 0; position < row.length; position++) {
             result += horizontalSearch(row, position);
             result += verticalSearch(rowNumber, position, rows);
-            result += CrossSearch(rowNumber, position, rows);
+            result += crossSearch(rowNumber, position, rows);
         }
         rowNumber++;
     }
-    const mirroredMatrix = mirrorMatrix(rows);
+    const mirroredMatrix: string[] = mirrorMatrix(rows);
     rowNumber = 0;
     for (let row of mirroredMatrix) {
         for (let position = 0; position < row.length; position++) {
-            result += CrossSearch(rowNumber, position, rows);
+            result += crossSearch(rowNumber, position, mirroredMatrix);
         }
         rowNumber++;
     }
