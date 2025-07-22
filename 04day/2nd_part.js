@@ -35,17 +35,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var fs_1 = require("fs");
+var MAGICWORD = "MAS";
 function readInput(fileName) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -56,55 +48,64 @@ function readInput(fileName) {
         });
     });
 }
-function isIncreasing(first, second) {
-    return first < second;
+function reverseWords(str) {
+    var words = str.split("");
+    var reversedWords = words.reverse();
+    return reversedWords.join("").trim();
 }
-function isCorrectDiffering(first, second) {
-    return first + 4 > second;
+function isMagicWord(section) {
+    return section == MAGICWORD || reverseWords(section) == MAGICWORD ? true : false;
 }
-function isSafe(level) {
-    for (var idx = 0; idx < level.length - 1; idx++) {
-        var isIncreased = isIncreasing(Number(level[idx]), Number(level[idx + 1]));
-        var isCorrectDiffer = isCorrectDiffering(Number(level[idx]), Number(level[idx + 1]));
-        if (!(isIncreased && isCorrectDiffer)) {
-            return false;
-        }
+function isMagicFound(rowNumber, position, input) {
+    var horizontalStopPoint = position > input[rowNumber].length - MAGICWORD.length;
+    var verticalStopPoint = input.length - MAGICWORD.length < rowNumber;
+    if (horizontalStopPoint || verticalStopPoint) {
+        return false;
     }
-    return true;
+    var section = getCrossString(rowNumber, position, input);
+    return isMagicWord(section);
 }
-function isProblemDampenerOK(level) {
-    for (var idx = 0; idx < level.length; idx++) {
-        var reducedLevel = __spreadArray([], level, true);
-        reducedLevel.splice(idx, 1);
-        !isIncreasing(Number(reducedLevel[0]), Number(reducedLevel[1])) ? reducedLevel.reverse() : "";
-        if (isSafe(reducedLevel)) {
-            return true;
-        }
+function getCrossString(rowNumber, position, input) {
+    var letters = [];
+    var inc = 0;
+    for (var idx = position; idx < MAGICWORD.length + position; idx++) {
+        letters.push(input[rowNumber][position + inc]);
+        inc++;
+        rowNumber++;
     }
-    return false;
+    return letters.join("");
+}
+function getAdjacentString(x, y, matrix) {
+    return matrix[y][x + 2] + "A" + matrix[y + 2][x];
 }
 function main() {
     return __awaiter(this, void 0, void 0, function () {
-        var inputs, reports, safeLevelNumber;
+        var result, rowNumber, coordinates, inputs, rows, _i, rows_1, row, position, isMagic, adjacentString, isAdjacentMagic;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, readInput("input.txt")];
+                case 0:
+                    result = 0;
+                    rowNumber = 0;
+                    coordinates = [];
+                    return [4 /*yield*/, readInput("input.txt")];
                 case 1:
                     inputs = _a.sent();
-                    reports = inputs.split("\n");
-                    safeLevelNumber = 0;
-                    reports.forEach(function (report) {
-                        var level = report.split(" ");
-                        var secondLevel = __spreadArray([], level, true);
-                        !isIncreasing(Number(level[0]), Number(level[1])) ? level.reverse() : "";
-                        if (isSafe(level)) {
-                            safeLevelNumber += 1;
+                    rows = inputs.split("\n");
+                    for (_i = 0, rows_1 = rows; _i < rows_1.length; _i++) {
+                        row = rows_1[_i];
+                        for (position = 0; position < row.length; position++) {
+                            isMagic = isMagicFound(rowNumber, position, rows);
+                            if (isMagic) {
+                                adjacentString = getAdjacentString(position, rowNumber, rows);
+                                isAdjacentMagic = isMagicWord(adjacentString);
+                                if (isAdjacentMagic) {
+                                    result++;
+                                }
+                            }
                         }
-                        else {
-                            safeLevelNumber = isProblemDampenerOK(secondLevel) ? safeLevelNumber + 1 : safeLevelNumber;
-                        }
-                    });
-                    console.log(safeLevelNumber);
+                        rowNumber++;
+                    }
+                    console.log(result);
                     return [2 /*return*/];
             }
         });
